@@ -1,0 +1,40 @@
+{{- if and (.Values.kubeRayOperator) (.Values.kubeRayOperator.enable) -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ray-operator-crds
+  namespace: {{ .Values.argoNamespace | default "argocd" }}
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: {{ .Values.argoProject | default "default" }}
+  source:
+    path: helm-chart/kuberay-operator/crds
+    repoURL: https://github.com/ray-project/kuberay
+    targetRevision: v1.2.2
+  syncPolicy:
+    syncOptions:
+    - Replace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kuberay-operator
+  namespace: {{ .Values.argoNamespace | default "argocd" }}
+spec:
+  destination:
+    namespace: ray-operator
+    server: {{ .Values.destinationServer | default "https://kubernetes.default.svc" }}
+  project: {{ .Values.argoProject | default "default" }}
+  source:
+    helm:
+      skipCrds: true
+    path: helm-chart/kuberay-operator
+    repoURL: https://github.com/ray-project/kuberay
+    targetRevision: v1.2.2
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+---
+{{- end -}}
+

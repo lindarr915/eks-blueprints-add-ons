@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: add-ons
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      values: |
+        repoUrl: 'https://github.com/lindarr915/eks-blueprints-add-ons.git'
+        metricsServer:
+          enable: true
+        argoWorkflows:
+          enable: true
+        certManager:
+          enable: true
+        kubeRayOperator:
+          enable: true
+    path: chart
+    repoURL: https://github.com/lindarr915/eks-blueprints-add-ons.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
