@@ -31,9 +31,91 @@ kube-prometheus-stack:
             resources:
               requests:
                 storage: 50Gi
+      resources:
+        limits:
+          cpu: 1
+          memory: 2000Mi
+      affinity: 
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: karpenter.sh/nodepool
+                operator: In
+                values:
+                - system
 
-  prometheusOperator:
-    admissionWebhooks:
-      failurePolicy: Ignore
 
-  ## additional configuration options available here: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+  alertmanager:
+    enabled: false
+    config:
+      global:
+        slack_api_url: your-slack-web-hook-url
+        resolve_timeout: 5m
+      route:
+        group_by: ['alertname']
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
+        receiver: 'slack'
+        routes:
+        - match:
+            alertname: Watchdog
+          receiver: 'null'
+        - receiver: 'slack'
+          matchers:
+          - alertname =~ "InfoInhibitor|Watchdog"
+      receivers:
+      - name: 'null'
+      - name: 'slack'
+        slack_configs:
+        - channel: '#webhook-alerts'
+          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+
+  ## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+  ##
+  grafana:
+    enabled: true
+    adminPassword: prom-operator
+    defaultDashboardsTimezone: Asia/Hong_Kong
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - name: Prometheus
+          type: prometheus
+          version: 1
+          url: http://kube-prometheus-stack-prometheus.kube-prometheus-stack:9090/
+          access: proxy
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        kuberay-default-dashboard:
+          url: https://raw.githubusercontent.com/aws-samples/ray-serve-whisper-streaming-on-eks/main/infra/monitoring/dashboard/default_grafana_dashboard.json
+        ray-serve-dashbaord:
+          url: https://raw.githubusercontent.com/aws-samples/ray-serve-whisper-streaming-on-eks/main/infra/monitoring/dashboard/serve_grafana_dashboard.json
+        ray-serve-deployment-dashboard:
+          url: https://raw.githubusercontent.com/aws-samples/ray-serve-whisper-streaming-on-eks/main/infra/monitoring/dashboard/serve_deployment_grafana_dashboard.json
+    grafana.ini:
+      auth:
+        sigv4_auth_enabled: true
+    useStatefulSet: true
+    persistence:
+      type: pvc
+      enabled: true
+      # storageClassName: default
+      accessModes:
+      - ReadWriteOnce
+      size: 10Gi
