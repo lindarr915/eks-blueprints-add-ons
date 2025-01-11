@@ -29,6 +29,13 @@ spec:
   source:
     helm:
       skipCrds: true
+      values: |
+        nodeSelector:
+          karpenter.sh/nodepool: system
+        tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+          effect: "NoSchedule"
     path: helm-chart/kuberay-operator
     repoURL: https://github.com/ray-project/kuberay
     targetRevision: v1.2.2

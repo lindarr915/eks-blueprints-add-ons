@@ -1,9 +1,4 @@
-cert-manager:
-  extraArgs:
-  - --enable-certificate-owner-ref=true
-  installCRDs: true
-  serviceAccount:
-    create: true
+argo-workflows:
   nodeSelector:
     karpenter.sh/nodepool: system
   tolerations:

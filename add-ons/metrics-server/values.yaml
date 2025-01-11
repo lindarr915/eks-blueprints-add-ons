@@ -3,3 +3,9 @@ metrics-server:
   podDisruptionBudget:
     enabled: true
     maxUnavailable: 1
+  nodeSelector:
+    karpenter.sh/nodepool: system
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"

@@ -286,3 +286,6 @@ velero:
 opentelemetryCollector:
   enable: false
   serviceAccountName:
+
+kubeRayOperator:
+  enable: false
