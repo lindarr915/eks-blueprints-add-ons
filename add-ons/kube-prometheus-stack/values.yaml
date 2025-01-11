@@ -47,7 +47,7 @@ kube-prometheus-stack:
       tolerations:
       - key: "CriticalAddonsOnly"
         operator: "Exists"
-        effect: "NoExecute"
+        effect: "NoSchedule"
 
 
   alertmanager:
