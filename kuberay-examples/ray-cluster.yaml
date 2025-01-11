@@ -60,3 +60,4 @@ spec:
         - key: ray.io/node-type
           operator: Equal
           effect: NoSchedule
+          valu: worker
