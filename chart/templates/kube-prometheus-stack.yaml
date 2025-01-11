@@ -21,6 +21,8 @@ spec:
             prometheusSpec:
               podMonitorSelectorNilUsesHelmValues: false
               serviceMonitorSelectorNilUsesHelmValues: false
+      valueFiles:
+      - values.yaml
   destination:
     server: {{ .Values.destinationServer | default "https://kubernetes.default.svc" }}
     namespace: kube-prometheus-stack
