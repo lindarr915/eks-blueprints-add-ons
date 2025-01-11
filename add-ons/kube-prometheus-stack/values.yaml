@@ -44,6 +44,10 @@ kube-prometheus-stack:
                 operator: In
                 values:
                 - system
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+        effect: "NoExecute"
 
 
   alertmanager:
