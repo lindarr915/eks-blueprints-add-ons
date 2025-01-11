@@ -58,6 +58,5 @@ spec:
           operator: Exists
           effect: NoSchedule
         - key: ray.io/node-type
-          operator: Equal
+          operator: Exists
           effect: NoSchedule
-          valu: worker
