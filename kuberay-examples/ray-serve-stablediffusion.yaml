@@ -42,7 +42,7 @@ spec:
               num_cpus: 3
               num_gpus: 1
   rayClusterConfig:
-    rayVersion: '2.24.0'
+    rayVersion: '2.33.0'
     enableInTreeAutoscaling: true
     headGroupSpec:
       headService:
@@ -86,9 +86,6 @@ spec:
                 requests:
                   cpu: 2
                   memory: 16Gi
-          nodeSelector:
-            NodeGroupType: x86-cpu-karpenter
-            type: karpenter
           volumes:
             - name: ray-logs
               emptyDir: {}
@@ -123,12 +120,17 @@ spec:
                     memory: "14Gi"
                     nvidia.com/gpu: 1
             nodeSelector:
-              NodeGroupType: g5-gpu-karpenter
-              type: karpenter
+              karpenter.sh/nodepool: gpu
             tolerations:
               - key: "nvidia.com/gpu"
                 operator: "Exists"
                 effect: "NoSchedule"
+              - effect: NoSchedule
+                key: ray.io/node-type
+                value: worker
+                operator: "Equal"
+
+                
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
