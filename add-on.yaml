@@ -20,8 +20,22 @@ spec:
           enable: true
         kubeRayOperator:
           enable: true
+        kubePrometheusStack:
+          enable: true
+        externalDns:
+          enable: true
+          createNamespace: true
+          nodeSelector: 
+            karpenter.sh/nodepool: system
+          tolerations: 
+            - key: "CriticalAddonsOnly"
+              operator: "Exists"
+              effect: "NoExecute"
+
     path: chart
     repoURL: https://github.com/lindarr915/eks-blueprints-add-ons.git
     targetRevision: HEAD
   syncPolicy:
     automated: {}
+
+
