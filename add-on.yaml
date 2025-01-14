@@ -13,11 +13,11 @@ spec:
       values: |
         repoUrl: 'https://github.com/lindarr915/eks-blueprints-add-ons.git'
         metricsServer:
-          enable: true
+          enable: false
         argoWorkflows:
           enable: true
         certManager:
-          enable: true
+          enable: false
         kubeRayOperator:
           enable: true
         kubePrometheusStack:
