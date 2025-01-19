@@ -13,12 +13,14 @@ controller:
       selector: 
         release: kube-prometheus-stack
 
-  # nodeSelector:
-  #   karpenter.sh/nodepool: system
-  # tolerations:
-  #   - key: "CriticalAddonsOnly"
-  #     operator: "Exists"
-  #     effect: "NoSchedule"
+
+  nodeSelector:
+    karpenter.sh/nodepool: system
+
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 server:
   metrics:
@@ -47,3 +49,13 @@ server:
   configs:
     cm:
       admin.enabled: true
+
+  nodeSelector:
+    karpenter.sh/nodepool: system
+
+  # -- [Tolerations] for use with node taints
+  # @default -- `[]` (defaults to global.tolerations)
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
