@@ -16,5 +16,6 @@ appVersion: "1.0"
 
 dependencies:
   - name: external-dns
-    version: 6.13.1
-    repository: https://charts.bitnami.com/bitnami
+    version: 1.15.0
+    repository: https://kubernetes-sigs.github.io/external-dns/
+    
