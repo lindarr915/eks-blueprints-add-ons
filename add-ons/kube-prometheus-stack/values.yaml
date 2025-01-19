@@ -80,6 +80,20 @@ kube-prometheus-stack:
   ## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
   ##
   grafana:
+    affinity: 
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: karpenter.sh/nodepool
+              operator: In
+              values:
+              - system
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
+
     enabled: true
     adminPassword: prom-operator
     defaultDashboardsTimezone: Asia/Hong_Kong
@@ -123,3 +137,4 @@ kube-prometheus-stack:
       accessModes:
       - ReadWriteOnce
       size: 10Gi
+
