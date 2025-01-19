@@ -1,0 +1,89 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: argo-cd
+    repoURL: https://argoproj.github.io/argo-helm
+    targetRevision: 7.7.16  # Using the version from your workspace files
+    helm:
+      values: |
+        global:
+          domain: argocd.lindarr.people.aws.dev
+          
+        configs:
+          params:
+            server.insecure: true
+
+        controller:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              selector: 
+                release: kube-prometheus-stack
+
+
+          nodeSelector:
+            karpenter.sh/nodepool: system
+
+          tolerations:
+            - key: "CriticalAddonsOnly"
+              operator: "Exists"
+              effect: "NoSchedule"
+
+        server:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              selector: 
+              release: kube-prometheus-stack
+
+
+          ingress:
+            enabled: false
+            controller: aws
+            ingressClassName: alb
+            annotations:
+              alb.ingress.kubernetes.io/scheme: internet-facing
+              alb.ingress.kubernetes.io/target-type: ip
+              alb.ingress.kubernetes.io/backend-protocol: HTTP
+              alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS":443}]'
+              alb.ingress.kubernetes.io/ssl-redirect: '443'
+              alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:091550601287:certificate/d1047a28-746f-4ed9-9c42-0a0de441a2f2
+            aws:
+              serviceType: ClusterIP # <- Used with target-type: ip
+              backendProtocolVersion: GRPC
+
+          configs:
+            cm:
+              admin.enabled: true
+
+          nodeSelector:
+            karpenter.sh/nodepool: system
+
+          # -- [Tolerations] for use with node taints
+          # @default -- `[]` (defaults to global.tolerations)
+          tolerations:
+            - key: "CriticalAddonsOnly"
+              operator: "Exists"
+              effect: "NoSchedule"
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 1
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 2m
