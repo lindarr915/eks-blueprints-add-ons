@@ -13,11 +13,11 @@ spec:
       values: |
         repoUrl: 'https://github.com/lindarr915/eks-blueprints-add-ons.git'
         metricsServer:
-          enable: false
+          enable: true
         argoWorkflows:
           enable: true
         certManager:
-          enable: false
+          enable: true
         kubeRayOperator:
           enable: true
         kubePrometheusStack:
@@ -30,7 +30,7 @@ spec:
           tolerations: 
             - key: "CriticalAddonsOnly"
               operator: "Exists"
-              effect: "NoExecute"
+              effect: "NoSchedule"
 
     path: chart
     repoURL: https://github.com/lindarr915/eks-blueprints-add-ons.git
