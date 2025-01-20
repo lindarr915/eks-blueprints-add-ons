@@ -3,9 +3,7 @@
 Welcome to the EKS Blueprints Add-ons repository.
 
 This repository contains GitOps configuration which follows the ArgoCD App of Apps pattern. It demonstrates how EKS customers can leverage ArgoCD to easily bootstrap an EKS cluster with a wide variety of Kubernetes add-ons.
-
-## Usage
-
+ 
 ### With the EKS Blueprints Framework
 
 This repository can be used in concert with the [Amazon EKS Blueprints framework](https://github.com/aws-ia/terraform-aws-eks-blueprints). Please see the [ArgoCD add-on documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#app-of-apps) for details on how to easily bootstrap an EKS cluster with the add-on configuration contained in this repository.
